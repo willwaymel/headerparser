@@ -5,8 +5,7 @@
 var express = require('express');
 var app = express();
 var accepts = require('accepts')//this is for the languages 
-var browser = require('detect-browser');//this is to detect browser
-var useragent = require('useragent');//to detect computer, OS, and version of OS
+
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -29,14 +28,18 @@ function getOS(headerUserAgent){
 function getIP(reqIP) {
   return /:/.test(reqIP) ? reqIP.split(":").reverse()[0] : reqIP; // in case it's ipV6 formatted with ::ffff:127.0.0.0
 }
+function getLanguage(reqAcceptsLanguages){
+  //accept-language
+  return reqAcceptsLanguages.split(",")[0];
+}
 
 app.get("/api/whoami", function (req, res) {
   // res.status(200).send('Hello World');
   var j = {};
   var accept = accepts(req)
   j.ipaddress = getIP(req.ip);
-  j.language = accept.languages()[0];
-  j.software = getOS(req.headers["user-agent"])
+  j.language = getLanguage(req.headers["accept-language"]);
+  j.software = getOS(req.headers["user-agent"]);
   res.end(JSON.stringify(j));
 });
 
